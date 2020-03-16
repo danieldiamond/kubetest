@@ -179,15 +179,18 @@ class Service(ApiObject):
         Returns:
             The response data
         """
-        return client.CoreV1Api().connect_get_namespaced_service_proxy_with_path(
-            name=f'{self.name}:{self.obj.spec.ports[0].port}',
-            namespace=self.namespace,
-            path=path,
+        path_params = {
+            "name": f'{self.name}:{self.obj.spec.ports[0].port}',
+            "namespace": self.namespace,
+            "path": path
+        }
+        return client.CoreV1Api().api_client.call_api(
+            '/api/v1/namespaces/{namespace}/services/{name}/proxy/{path}', 'GET',
+            path_params=path_params,
         )
 
-
-    def proxy_http_post(self, path: str, **kwargs) -> str:
-        """Issue a GET request to proxy of a Service.
+    def proxy_http_post(self, path: str, body) -> str:
+        """Issue a POST request to proxy of a Service.
 
         Args:
             path: The URI path for the request.
@@ -195,9 +198,13 @@ class Service(ApiObject):
         Returns:
             The response data
         """
-        return client.CoreV1Api().connect_post_namespaced_service_proxy_with_path(
-            name=f'{self.name}:{self.obj.spec.ports[0].port}',
-            namespace=self.namespace,
-            path=path,
-            **kwargs
+        path_params = {
+            "name": f'{self.name}:{self.obj.spec.ports[0].port}',
+            "namespace": self.namespace,
+            "path": path
+        }
+        return client.CoreV1Api().api_client.call_api(
+            '/api/v1/namespaces/{namespace}/services/{name}/proxy/{path}', 'POST',
+            path_params=path_params,
+            body=body
         )
