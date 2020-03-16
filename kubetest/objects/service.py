@@ -184,3 +184,20 @@ class Service(ApiObject):
             namespace=self.namespace,
             path=path,
         )
+
+
+    def proxy_http_post(self, path: str, **kwargs) -> str:
+        """Issue a GET request to proxy of a Service.
+
+        Args:
+            path: The URI path for the request.
+
+        Returns:
+            The response data
+        """
+        return client.CoreV1Api().connect_post_namespaced_service_proxy_with_path(
+            name=f'{self.name}:{self.obj.spec.ports[0].port}',
+            namespace=self.namespace,
+            path=path,
+            **kwargs
+        )
